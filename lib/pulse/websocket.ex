@@ -1,10 +1,8 @@
 defmodule Pulse.WebSocket.State do
-  @moduledoc false
-
   @enforce_keys [:commitment, :program_id, :subscription_id, :url]
   defstruct @enforce_keys
 
-  @type t() :: %__MODULE__{
+  @type t :: %__MODULE__{
           commitment: String.t(),
           program_id: String.t(),
           subscription_id: non_neg_integer | nil,
@@ -13,14 +11,14 @@ defmodule Pulse.WebSocket.State do
 end
 
 defmodule Pulse.WebSocket do
-  @moduledoc false
-
   use WebSockex
 
   require Logger
 
-  alias Pulse.WebSocket.State
+  alias Pulse.Event
   alias Pulse.LogNotification
+  alias Pulse.Rpc
+  alias Pulse.WebSocket.State
 
   @subscription_request_id 1
 
@@ -42,7 +40,7 @@ defmodule Pulse.WebSocket do
       url: url
     }
 
-    WebSockex.start_link(url, __MODULE__, state, [])
+    WebSockex.start_link(url, __MODULE__, state)
   end
 
   @impl WebSockex
@@ -102,17 +100,31 @@ defmodule Pulse.WebSocket do
 
   @spec handle_log_notification(map(), State.t()) :: {:ok, State.t()}
   defp handle_log_notification(
-         %{"param" => %{"result" => %{"context" => context, "value" => value}}},
+         %{"params" => %{"result" => %{"context" => context, "value" => value}}},
          state
        ) do
-    notification = %LogNotification{
-      err: Map.get(value, "err"),
-      logs: Map.get(value, "logs", []),
-      signature: Map.get(value, "signature"),
-      slot: Map.get(context, "slot")
-    }
+    notification = LogNotification.new_from_value(value, context)
 
-    Pulse.EventBus.publish(notification)
+    case Rpc.get_transaction(notification, "http://127.0.0.1:8899", state.commitment) do
+      {:ok, result} ->
+        event = %Event{
+          accounts: get_in(result, ["transaction", "message", "accountKeys"]),
+          compute_units: get_in(result, ["meta", "computeUnitsConsumed"]),
+          logs: notification.logs,
+          program_id: state.program_id,
+          signature: notification.signature,
+          slot: get_in(result, ["slot"]),
+          timestamp: DateTime.from_unix(get_in(result, ["blockTime"])),
+          metadata: %{
+            version: get_in(result, ["version"])
+          }
+        }
+
+        Logger.info(event)
+
+      {:error, reason} ->
+        Logger.error("Failed fetching transaction: #{notification.signature}\n#{inspect(reason)}")
+    end
 
     {:ok, state}
   end

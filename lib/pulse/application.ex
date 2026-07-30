@@ -1,18 +1,19 @@
 defmodule Pulse.Application do
-  @moduledoc false
-
   use Application
 
   @impl Application
   def start(_type, _args) do
     children = [
-      Pulse.EventBus,
+      {
+        Finch,
+        name: Pulse.Finch
+      },
       {
         Pulse.WebSocket,
         [
           url: "ws://127.0.0.1:8900",
           commitment: "confirmed",
-          program_id: "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+          program_id: "11111111111111111111111111111111"
         ]
       }
     ]

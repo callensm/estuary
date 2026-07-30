@@ -1,6 +1,4 @@
 defmodule Pulse.Event do
-  @moduledoc false
-
   @enforce_keys [:program_id, :signature, :slot]
   defstruct [
     :compute_units,
@@ -15,7 +13,7 @@ defmodule Pulse.Event do
     metadata: %{}
   ]
 
-  @type t() :: %__MODULE__{
+  @type t :: %__MODULE__{
           accounts: list(String.t()),
           compute_units: non_neg_integer() | nil,
           inner_instruction_index: non_neg_integer() | nil,

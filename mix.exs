@@ -22,7 +22,6 @@ defmodule Pulse.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:finch, "~> 0.23.0"},
       {:jason, "~> 1.4.0"},
       {:websockex, "~> 0.5.1"}
     ]

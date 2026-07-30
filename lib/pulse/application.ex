@@ -5,15 +5,11 @@ defmodule Pulse.Application do
   def start(_type, _args) do
     children = [
       {
-        Finch,
-        name: Pulse.Finch
-      },
-      {
         Pulse.WebSocket,
         [
-          url: "ws://127.0.0.1:8900",
-          commitment: "confirmed",
-          program_id: "11111111111111111111111111111111"
+          url: Application.get_env(:pulse, :ws_url),
+          commitment: Application.get_env(:pulse, :commitment),
+          program_id: Application.get_env(:pulse, :program_id)
         ]
       }
     ]

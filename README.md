@@ -1,23 +1,27 @@
-# Estuary
+<div align="center">
+  <h1>Estuary</h1>
 
-**TODO: Add description**
+  <p>
+    <img alt="GitHub License" src="https://img.shields.io/github/license/callensm/estuary?color=blue">
+    <img alt="GitHub Actions Workflow Status" src="https://img.shields.io/github/actions/workflow/status/callensm/estuary/ci.yaml">
+  </p>
+</div>
 
-## Installation
+## Configuration
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `estuary` to your list of dependencies in `mix.exs`:
+```yaml
+# .estuaryrc.yaml
 
-```elixir
-def deps do
-  [
-    {:estuary, "~> 0.1.0"}
-  ]
-end
+estuary:
+  ws_url: <string>
+  commitment: processed | confirmed | finalized
+  program_id: <string>
+  sinks: # Must configure at least one sink type
+    - type: stdout
+      format: json | pretty
+    - type: file
+      path: <string>
 ```
-
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at <https://hexdocs.pm/estuary>.
 
 ## License
 

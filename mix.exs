@@ -4,7 +4,7 @@ defmodule Estuary.MixProject do
   def project do
     [
       app: :estuary,
-      version: "0.1.0",
+      version: "0.1.1",
       elixir: "~> 1.20",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
@@ -23,7 +23,10 @@ defmodule Estuary.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      {:ex_aws, "~> 2.7.0"},
+      {:ex_aws_sqs, "~> 3.4.0"},
       {:jason, "~> 1.4.0"},
+      {:kafka_ex, "~> 1.1.1"},
       {:websockex, "~> 0.5.1"},
       {:yaml_elixir, "~> 2.12.2"}
     ]

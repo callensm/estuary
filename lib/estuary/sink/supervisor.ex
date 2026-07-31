@@ -9,8 +9,10 @@ defmodule Estuary.Sink.Supervisor do
   use Supervisor
 
   @sink_modules %{
-    "stdout" => Estuary.Sink.Stdout,
-    "file" => Estuary.Sink.File
+    "file" => Estuary.Sink.File,
+    "kafka" => Estuary.Sink.Kafka,
+    "sqs" => Estuary.Sink.Sqs,
+    "stdout" => Estuary.Sink.Stdout
   }
 
   def start_link(sinks), do: Supervisor.start_link(__MODULE__, sinks, name: __MODULE__)

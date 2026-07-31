@@ -21,6 +21,16 @@ estuary:
       format: json | pretty
     - type: file
       path: <string>
+    - type: sqs
+      queue_url: <string>
+      region: <string>
+    - type: kafka
+      topic: <string>
+      brokers:
+        - <string>
+        - <string>
+        # ...
+
 ```
 
 ## License

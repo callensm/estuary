@@ -100,4 +100,24 @@ defmodule Estuary.Config do
       }
     }
   end
+
+  defp sink_from_env("sqs") do
+    %{
+      type: "sqs",
+      opts: %{
+        "queue_url" => System.get_env("ESTUARY_SQS_QUEUE_URL"),
+        "region" => System.get_env("ESTUARY_SQS_REGION")
+      }
+    }
+  end
+
+  defp sink_from_env("kafka") do
+    %{
+      type: "kafka",
+      opts: %{
+        "brokers" => System.get_env("ESTUARY_KAFKA_BROKERS"),
+        "topic" => System.get_env("ESTUARY_KAFKA_TOPIC")
+      }
+    }
+  end
 end

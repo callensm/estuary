@@ -1,5 +1,5 @@
-defmodule Pulse.Sink.Stdout do
-  @behaviour Pulse.Sink
+defmodule Estuary.Sink.Stdout do
+  @behaviour Estuary.Sink
 
   @impl true
   def init(opts) do

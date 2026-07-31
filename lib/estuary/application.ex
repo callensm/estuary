@@ -1,7 +1,7 @@
-defmodule Pulse.Application do
+defmodule Estuary.Application do
   use Application
 
-  alias Pulse.Config
+  alias Estuary.Config
 
   @impl Application
   def start(_type, _args) do
@@ -12,15 +12,15 @@ defmodule Pulse.Application do
         Registry,
         [
           keys: {:duplicate, :key},
-          name: Pulse.SinkRegistry
+          name: Estuary.SinkRegistry
         ]
       },
       {
-        Pulse.Sink.Supervisor,
+        Estuary.Sink.Supervisor,
         config.sinks
       },
       {
-        Pulse.WebSocket,
+        Estuary.WebSocket,
         [
           url: config.ws_url,
           commitment: config.commitment,
@@ -31,7 +31,7 @@ defmodule Pulse.Application do
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
-    opts = [strategy: :one_for_one, name: Pulse.Supervisor]
+    opts = [strategy: :one_for_one, name: Estuary.Supervisor]
     Supervisor.start_link(children, opts)
   end
 end

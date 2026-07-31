@@ -1,5 +1,5 @@
-defmodule Pulse.Sink.File do
-  @behaviour Pulse.Sink
+defmodule Estuary.Sink.File do
+  @behaviour Estuary.Sink
 
   @impl true
   def init(%{"path" => path}) when is_binary(path) do

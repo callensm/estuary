@@ -1,10 +1,10 @@
-defmodule Pulse.Sink do
+defmodule Estuary.Sink do
   @moduledoc """
   Behaviour implemented by every event sink (stdout, file, sqs, kafka, ...).
 
-  Each sink runs in its own supervised `Pulse.Sink.Server`
+  Each sink runs in its own supervised `Estuary.Sink.Server`
   process. `init/1` is called once at startup with that sink's `opts` map
-  (straight from `.pulserc.yaml` / env, string keys); `handle_event/2` is
+  (straight from `.estuaryrc.yaml` / env, string keys); `handle_event/2` is
   called for every parsed log notification.
 
   A sink that fails to init (e.g. missing required config) should return
@@ -17,7 +17,7 @@ defmodule Pulse.Sink do
   sink and drop every event behind it.
   """
 
-  alias Pulse.Event.LogNotification
+  alias Estuary.Event.LogNotification
 
   @callback init(opts :: map()) :: {:ok, state :: term()} | {:error, term()}
 

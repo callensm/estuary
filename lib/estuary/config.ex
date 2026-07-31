@@ -1,4 +1,4 @@
-defmodule Pulse.Config do
+defmodule Estuary.Config do
   require Logger
 
   @default_ws_url "ws://127.0.0.1:8900"
@@ -17,26 +17,26 @@ defmodule Pulse.Config do
   @spec load(String.t() | nil) :: t()
   def load(path \\ nil) do
     raw = read_yaml(path || find_config_path())
-    pulse = Map.get(raw, "pulse", %{})
+    estuary = Map.get(raw, "estuary", %{})
 
     %{
-      ws_url: coalesce(pulse, "ws_url", "PULSE_WS_URL", @default_ws_url),
-      commitment: coalesce(pulse, "commitment", "PULSE_COMMITMENT", @default_commitment),
-      program_id: coalesce(pulse, "program_id", "PULSE_PROGRAM_ID", @default_program_id),
-      sinks: load_sinks(pulse)
+      ws_url: coalesce(estuary, "ws_url", "ESTUARY_WS_URL", @default_ws_url),
+      commitment: coalesce(estuary, "commitment", "ESTUARY_COMMITMENT", @default_commitment),
+      program_id: coalesce(estuary, "program_id", "ESTUARY_PROGRAM_ID", @default_program_id),
+      sinks: load_sinks(estuary)
     }
   end
 
   defp find_config_path() do
     cond do
-      (path = System.get_env("PULSE_CONFIG")) && File.exists?(path) ->
+      (path = System.get_env("ESTUARY_CONFIG")) && File.exists?(path) ->
         path
 
-      File.exists?(".pulserc.yaml") ->
-        ".pulserc.yaml"
+      File.exists?(".estuaryrc.yaml") ->
+        ".estuaryrc.yaml"
 
-      File.exists?(".pulserc.yml") ->
-        ".pulserc.yml"
+      File.exists?(".estuaryrc.yml") ->
+        ".estuaryrc.yml"
 
       true ->
         nil
@@ -76,7 +76,7 @@ defmodule Pulse.Config do
   end
 
   defp load_sinks(_data) do
-    [sink_from_env(System.get_env("PULSE_SINK_TYPE", "stdout"))]
+    [sink_from_env(System.get_env("ESTUARY_SINK_TYPE", "stdout"))]
   end
 
   defp normalize_sink(%{"type" => type} = sink) do
@@ -87,7 +87,7 @@ defmodule Pulse.Config do
     %{
       type: "stdout",
       opts: %{
-        "format" => System.get_env("PULSE_STDOUT_FORMAT", "json")
+        "format" => System.get_env("ESTUARY_STDOUT_FORMAT", "json")
       }
     }
   end
@@ -96,7 +96,7 @@ defmodule Pulse.Config do
     %{
       type: "file",
       opts: %{
-        "path" => System.get_env("PULSE_FILE_PATH", "./events.json")
+        "path" => System.get_env("ESTUARY_FILE_PATH", "./events.json")
       }
     }
   end

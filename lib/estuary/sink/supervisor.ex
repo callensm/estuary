@@ -1,7 +1,7 @@
-defmodule Pulse.Sink.Supervisor do
+defmodule Estuary.Sink.Supervisor do
   @moduledoc """
-  Starts one `Pulse.Sink.Server` per sink listed in the
-  loaded config (see `Pulse.Config`).
+  Starts one `Estuary.Sink.Server` per sink listed in the
+  loaded config (see `Estuary.Config`).
   """
 
   require Logger
@@ -9,8 +9,8 @@ defmodule Pulse.Sink.Supervisor do
   use Supervisor
 
   @sink_modules %{
-    "stdout" => Pulse.Sink.Stdout,
-    "file" => Pulse.Sink.File
+    "stdout" => Estuary.Sink.Stdout,
+    "file" => Estuary.Sink.File
   }
 
   def start_link(sinks), do: Supervisor.start_link(__MODULE__, sinks, name: __MODULE__)
@@ -24,7 +24,7 @@ defmodule Pulse.Sink.Supervisor do
       |> Enum.with_index()
       |> Enum.map(fn {%{type: type, opts: opts}, idx} ->
         module = sink_module!(type)
-        Supervisor.child_spec({Pulse.Sink.Server, {module, opts}}, id: {module, idx})
+        Supervisor.child_spec({Estuary.Sink.Server, {module, opts}}, id: {module, idx})
       end)
 
     Supervisor.init(children, strategy: :one_for_one)

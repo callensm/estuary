@@ -1,4 +1,4 @@
-defmodule Pulse.Sink.Server do
+defmodule Estuary.Sink.Server do
   use GenServer
 
   require Logger
@@ -11,7 +11,7 @@ defmodule Pulse.Sink.Server do
   def init({module, opts}) do
     case module.init(opts) do
       {:ok, state} ->
-        {:ok, _} = Registry.register(Pulse.SinkRegistry, :sink, module)
+        {:ok, _} = Registry.register(Estuary.SinkRegistry, :sink, module)
         {:ok, %{module: module, state: state}}
 
       {:error, reason} ->

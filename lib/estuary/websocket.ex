@@ -1,10 +1,10 @@
-defmodule Pulse.WebSocket do
+defmodule Estuary.WebSocket do
   use WebSockex
 
   require Logger
 
-  alias Pulse.LogParser
-  alias Pulse.WebSocket.State
+  alias Estuary.LogParser
+  alias Estuary.WebSocket.State
 
   defmodule State do
     @moduledoc false
@@ -106,7 +106,7 @@ defmodule Pulse.WebSocket do
         slot: Map.get(context, "slot")
       })
 
-    Pulse.Dispatcher.broadcast(notification)
+    Estuary.Dispatcher.broadcast(notification)
 
     {:ok, state}
   end

@@ -1,4 +1,4 @@
-defmodule Pulse.Event.Invocation do
+defmodule Estuary.Event.Invocation do
   @moduledoc """
   One frame in the program invocation tree, corresponding to a single
   `Program <id> invoke [depth]` ... `Program <id> success|failed` block.

@@ -1,3 +1,3 @@
-defmodule Pulse do
+defmodule Estuary do
   @moduledoc false
 end

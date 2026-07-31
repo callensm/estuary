@@ -1,9 +1,9 @@
-defmodule Pulse.Event.LogNotification do
+defmodule Estuary.Event.LogNotification do
   @moduledoc """
   A single parsed `logsNotification` event for one transaction.
   """
 
-  alias Pulse.Event.Invocation
+  alias Estuary.Event.Invocation
 
   @type t :: %__MODULE__{
           error: term(),

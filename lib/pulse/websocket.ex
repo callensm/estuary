@@ -1,23 +1,23 @@
-defmodule Pulse.WebSocket.State do
-  @type t :: %__MODULE__{
-          commitment: String.t(),
-          program_id: String.t(),
-          subscription_id: non_neg_integer | nil,
-          url: String.t()
-        }
-
-  @enforce_keys [:commitment, :program_id, :subscription_id, :url]
-  defstruct @enforce_keys
-end
-
 defmodule Pulse.WebSocket do
   use WebSockex
 
   require Logger
 
-  alias Pulse.LogHandler
   alias Pulse.LogParser
   alias Pulse.WebSocket.State
+
+  defmodule State do
+    @moduledoc false
+    @type t :: %__MODULE__{
+            commitment: String.t(),
+            program_id: String.t(),
+            subscription_id: non_neg_integer | nil,
+            url: String.t()
+          }
+
+    @enforce_keys [:commitment, :program_id, :subscription_id, :url]
+    defstruct @enforce_keys
+  end
 
   @subscription_request_id 1
 
@@ -42,7 +42,7 @@ defmodule Pulse.WebSocket do
     WebSockex.start_link(url, __MODULE__, state)
   end
 
-  @impl WebSockex
+  @impl true
   def handle_connect(_conn, state) do
     Logger.info("Connected to #{state.url}, subscribing to #{state.program_id}")
 
@@ -51,18 +51,18 @@ defmodule Pulse.WebSocket do
     {:ok, state}
   end
 
-  @impl WebSockex
+  @impl true
   def handle_disconnect(%{reason: reason}, state) do
     Logger.warning("Websocket disconnected: #{inspect(reason)}")
     {:ok, state}
   end
 
-  @impl WebSockex
+  @impl true
   def handle_cast({:send_message, message}, state) do
     {:reply, {:text, message}, state}
   end
 
-  @impl WebSockex
+  @impl true
   def handle_frame({:text, message}, state) do
     case Jason.decode(message) do
       {:ok, %{"method" => "logsNotification"} = decoded} ->
@@ -85,10 +85,10 @@ defmodule Pulse.WebSocket do
     end
   end
 
-  @impl WebSockex
+  @impl true
   def handle_frame(_frame, state), do: {:ok, state}
 
-  @impl WebSockex
+  @impl true
   def terminate(reason, _state) do
     Logger.warning("Websocket is shutting down: #{inspect(reason)}")
     :ok
@@ -98,7 +98,7 @@ defmodule Pulse.WebSocket do
          %{"params" => %{"result" => %{"context" => context, "value" => value}}},
          state
        ) do
-    notif =
+    notification =
       LogParser.parse(%{
         error: Map.get(value, "err"),
         logs: Map.get(value, "logs", []),
@@ -106,7 +106,7 @@ defmodule Pulse.WebSocket do
         slot: Map.get(context, "slot")
       })
 
-    LogHandler.handle_event(notif)
+    Pulse.Dispatcher.broadcast(notification)
 
     {:ok, state}
   end

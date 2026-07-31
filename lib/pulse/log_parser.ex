@@ -1,6 +1,6 @@
 defmodule Pulse.LogParser do
-  alias Pulse.LogNotification
-  alias Pulse.Invocation
+  alias Pulse.Event.LogNotification
+  alias Pulse.Event.Invocation
 
   @invoke_regex ~r/^Program (\w+) invoke \[(\d+)\]$/
   @consumed_regex ~r/^Program (\w+) consumed (\d+) of (\d+) compute units$/

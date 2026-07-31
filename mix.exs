@@ -23,7 +23,8 @@ defmodule Pulse.MixProject do
   defp deps do
     [
       {:jason, "~> 1.4.0"},
-      {:websockex, "~> 0.5.1"}
+      {:websockex, "~> 0.5.1"},
+      {:yaml_elixir, "~> 2.12.2"}
     ]
   end
 end

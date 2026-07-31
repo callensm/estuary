@@ -1,4 +1,10 @@
-defmodule Pulse.Invocation do
+defmodule Pulse.Event.Invocation do
+  @moduledoc """
+  One frame in the program invocation tree, corresponding to a single
+  `Program <id> invoke [depth]` ... `Program <id> success|failed` block.
+  Nested (CPI) calls appear in `children`.
+  """
+
   @type status :: :success | :failed | :unknown
 
   @type t :: %__MODULE__{
@@ -14,6 +20,7 @@ defmodule Pulse.Invocation do
           children: [t()]
         }
 
+  @derive Jason.Encoder
   @enforce_keys [:program_id, :depth]
   defstruct [
     :program_id,

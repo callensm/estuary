@@ -1,5 +1,9 @@
-defmodule Pulse.LogNotification do
-  alias Pulse.Invocation
+defmodule Pulse.Event.LogNotification do
+  @moduledoc """
+  A single parsed `logsNotification` event for one transaction.
+  """
+
+  alias Pulse.Event.Invocation
 
   @type t :: %__MODULE__{
           error: term(),
@@ -9,6 +13,7 @@ defmodule Pulse.LogNotification do
           slot: non_neg_integer() | nil
         }
 
+  @derive Jason.Encoder
   @enforce_keys [:signature, :slot]
   defstruct [
     :signature,

@@ -1,0 +1,7 @@
+pulse:
+  ws_url: ws://127.0.0.1:8900
+  commitment: confirmed
+  program_id: "11111111111111111111111111111111"
+  sinks:
+    - type: stdout
+      format: pretty

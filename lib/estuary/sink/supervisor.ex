@@ -4,13 +4,10 @@ defmodule Estuary.Sink.Supervisor do
   loaded config (see `Estuary.Config`).
   """
 
-  require Logger
-
   use Supervisor
 
   @sink_modules %{
     "file" => Estuary.Sink.File,
-    "kafka" => Estuary.Sink.Kafka,
     "sqs" => Estuary.Sink.Sqs,
     "stdout" => Estuary.Sink.Stdout
   }
@@ -19,8 +16,6 @@ defmodule Estuary.Sink.Supervisor do
 
   @impl Supervisor
   def init(sinks) do
-    Logger.info(inspect(sinks))
-
     children =
       sinks
       |> Enum.with_index()

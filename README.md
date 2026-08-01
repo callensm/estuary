@@ -22,15 +22,9 @@ estuary:
     - type: file
       path: <string>
     - type: sqs
+      endpoint_url: <string> # optional
       queue_url: <string>
       region: <string>
-    - type: kafka
-      topic: <string>
-      brokers:
-        - <string>
-        - <string>
-        # ...
-
 ```
 
 ## License

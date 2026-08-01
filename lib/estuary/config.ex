@@ -106,7 +106,8 @@ defmodule Estuary.Config do
       type: "sqs",
       opts: %{
         "queue_url" => System.get_env("ESTUARY_SQS_QUEUE_URL"),
-        "region" => System.get_env("ESTUARY_SQS_REGION")
+        "region" => System.get_env("ESTUARY_SQS_REGION"),
+        "endpoint_url" => System.get_env("ESTUARY_SQS_ENDPOINT_URL")
       }
     }
   end

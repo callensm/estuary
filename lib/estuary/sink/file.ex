@@ -15,7 +15,7 @@ defmodule Estuary.Sink.File do
 
   @impl true
   def handle_event(notification, %{io: io} = state) do
-    line = notification |> Jason.encode!()
+    line = Jason.encode!(notification)
     IO.write(io, line <> "\n")
     {:ok, state}
   end

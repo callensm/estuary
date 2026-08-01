@@ -1,0 +1,9 @@
+estuary:
+  ws_url: ws://127.0.0.1:8900
+  commitment: confirmed
+  program_id: "11111111111111111111111111111111"
+  sinks:
+    - type: sqs
+      queue_url: http://localhost:9324/000000000000/test-queue
+      endpoint_url: http://localhost:9324
+      region: elasticmq

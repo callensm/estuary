@@ -8,6 +8,7 @@ defmodule Estuary.MixProject do
       elixir: "~> 1.20",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
+      releases: releases(),
       license: ["Apache-2.0"]
     ]
   end
@@ -31,6 +32,15 @@ defmodule Estuary.MixProject do
       {:saxy, "~> 1.1.0"},
       {:websockex, "~> 0.5.1"},
       {:yaml_elixir, "~> 2.12.2"}
+    ]
+  end
+
+  defp releases do
+    [
+      estuary: [
+        include_erts: true,
+        steps: [:assemble, :tar]
+      ]
     ]
   end
 end

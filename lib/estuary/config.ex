@@ -101,6 +101,15 @@ defmodule Estuary.Config do
     }
   end
 
+  defp sink_from_env("webhook") do
+    %{
+      type: "webhook",
+      opts: %{
+        "url" => System.get_env("ESTUARY_WEBHOOK_URL")
+      }
+    }
+  end
+
   defp sink_from_env("sqs") do
     %{
       type: "sqs",

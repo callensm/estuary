@@ -10,7 +10,8 @@ defmodule Estuary.Sink.Supervisor do
     "file" => Estuary.Sink.File,
     "rabbitmq" => Estuary.Sink.Rabbitmq,
     "sqs" => Estuary.Sink.Sqs,
-    "stdout" => Estuary.Sink.Stdout
+    "stdout" => Estuary.Sink.Stdout,
+    "webhook" => Estuary.Sink.Webhook
   }
 
   def start_link(sinks), do: Supervisor.start_link(__MODULE__, sinks, name: __MODULE__)

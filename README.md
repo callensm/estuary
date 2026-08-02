@@ -21,6 +21,8 @@ estuary:
       format: json | pretty
     - type: file
       path: <string>
+    - type: webhook
+      url: <string>
     - type: sqs
       endpoint_url: <string> # Optional
       queue_url: <string>

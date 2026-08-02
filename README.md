@@ -23,6 +23,9 @@ estuary:
       path: <string>
     - type: webhook
       url: <string>
+      timeout_ms: <int>
+      headers:
+        MY_HEADER: my-header-value
     - type: sqs
       endpoint_url: <string> # Optional
       queue_url: <string>

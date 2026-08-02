@@ -105,7 +105,8 @@ defmodule Estuary.Config do
     %{
       type: "webhook",
       opts: %{
-        "url" => System.get_env("ESTUARY_WEBHOOK_URL")
+        "url" => System.get_env("ESTUARY_WEBHOOK_URL"),
+        "timeout_ms" => System.get_env("ESTUARY_WEBHOOK_TIMEOUT_MS")
       }
     }
   end

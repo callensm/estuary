@@ -121,4 +121,24 @@ defmodule Estuary.Config do
       }
     }
   end
+
+  defp sink_from_env("rabbitmq") do
+    %{
+      type: "rabbitmq",
+      opts: %{
+        "url" => System.get_env("ESTUARY_RABBITMQ_URL"),
+        "host" => System.get_env("ESTUARY_RABBITMQ_HOST"),
+        "port" => System.get_env("ESTUARY_RABBITMQ_PORT"),
+        "username" => System.get_env("ESTUARY_RABBITMQ_USERNAME"),
+        "password" => System.get_env("ESTUARY_RABBITMQ_PASSWORD"),
+        "vhost" => System.get_env("ESTUARY_RABBITMQ_VHOST"),
+        "queue" => System.get_env("ESTUARY_RABBITMQ_QUEUE"),
+        "exchange" => System.get_env("ESTUARY_RABBITMQ_EXCHANGE"),
+        "exchange_type" => System.get_env("ESTUARY_RABBITMQ_EXCHANGE_TYPE"),
+        "routing_key" => System.get_env("ESTUARY_RABBITMQ_ROUTING_KEY"),
+        "durable" => System.get_env("ESTUARY_RABBITMQ_DURABLE"),
+        "declare" => System.get_env("ESTUARY_RABBITMQ_DECLARE")
+      }
+    }
+  end
 end

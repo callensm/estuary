@@ -8,6 +8,7 @@ defmodule Estuary.Sink.Supervisor do
 
   @sink_modules %{
     "file" => Estuary.Sink.File,
+    "rabbitmq" => Estuary.Sink.Rabbitmq,
     "sqs" => Estuary.Sink.Sqs,
     "stdout" => Estuary.Sink.Stdout
   }

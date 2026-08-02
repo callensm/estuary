@@ -1,20 +1,27 @@
 services:
-  elasticmq:
-    image: softwaremill/elasticmq-native
-    ports:
-      - "9324:9324"
-      - "9325:9325"
-    volumes:
-      - ./elasticmq.conf:/opt/elasticmq.conf
+  # elasticmq:
+  #   image: softwaremill/elasticmq-native:latest
+  #   ports:
+  #     - "9324:9324"
+  #     - "9325:9325"
+  #   volumes:
+  #     - ./elasticmq.conf:/opt/elasticmq.conf
+  #
+  # elasticmq-ui:
+  #   image: softwaremill/elasticmq-ui:latest
+  #   ports:
+  #     - "3000:3000"
+  #   environment:
+  #     SQS_ENDPOINT: http://elasticmq:9324
+  #   depends_on:
+  #     - elasticmq
 
-  elasticmq-ui:
-    image: softwaremill/elasticmq-ui:latest
+  rabbitmq:
+    image: rabbitmq:4-management
+    container_name: rabbitmq
     ports:
-      - "3000:3000"
-    environment:
-      SQS_ENDPOINT: http://elasticmq:9324
-    depends_on:
-      - elasticmq
+      - "5672:5672"
+      - "15672:15672"
 
   # kafka:
   #   image: apache/kafka:latest

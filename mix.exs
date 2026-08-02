@@ -23,6 +23,7 @@ defmodule Estuary.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      {:amqp, "~> 4.1.1"},
       {:ex_aws, "~> 2.1"},
       {:ex_aws_sqs, "~> 3.4.0"},
       {:hackney, "~> 1.9"},

@@ -22,9 +22,24 @@ estuary:
     - type: file
       path: <string>
     - type: sqs
-      endpoint_url: <string> # optional
+      endpoint_url: <string> # Optional
       queue_url: <string>
       region: <string>
+    - type: rabbitmq
+      # Can provide a fully qualified connection URL string
+      url: <string>
+      # Optional can provide separate connection options instead
+      host: <string>
+      port: <string | int>
+      username: <string>
+      password: <string>
+      vhost: <string>
+      # Default exchange queue options
+      queue: <string>
+      # Named exchange with routing key options
+      exchange: <string>
+      exchange_type: direct | topic | fanout | headers
+      routing_key: <string>
 ```
 
 ## License

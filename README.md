@@ -20,7 +20,7 @@ estuary:
     - type: stdout
       format: json | pretty
     - type: file
-      path: <string>
+      path: <string> # JSON or JSONL file extension (JSON will be normalized into JSONL)
     - type: webhook
       url: <string>
       timeout_ms: <int>

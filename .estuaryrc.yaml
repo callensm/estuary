@@ -3,8 +3,10 @@ estuary:
   commitment: confirmed
   program_id: "11111111111111111111111111111111"
   sinks:
-    - type: webhook
-      url: https://webhook.site/3c808cd3-6695-47c7-9abd-bee8424f9e85
+    - type: stdout
+      format: json
+    # - type: webhook
+    #   url: https://webhook.site/3c808cd3-6695-47c7-9abd-bee8424f9e85
     # - type: sqs
     #   queue_url: http://localhost:9324/000000000000/test-queue
     #   endpoint_url: http://localhost:9324

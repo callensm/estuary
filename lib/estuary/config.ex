@@ -96,7 +96,7 @@ defmodule Estuary.Config do
     %{
       type: "file",
       opts: %{
-        "path" => System.get_env("ESTUARY_FILE_PATH", "./events.json")
+        "path" => System.get_env("ESTUARY_FILE_PATH", "./events.jsonl")
       }
     }
   end

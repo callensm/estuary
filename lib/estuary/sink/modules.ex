@@ -1,6 +1,7 @@
 defmodule Estuary.Sink.Modules do
   @sink_modules %{
     "file" => Estuary.Sink.Impl.File,
+    "pubsub" => Estuary.Sink.Impl.Pubsub,
     "rabbitmq" => Estuary.Sink.Impl.Rabbitmq,
     "sqs" => Estuary.Sink.Impl.Sqs,
     "stdout" => Estuary.Sink.Impl.Stdout,

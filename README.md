@@ -30,6 +30,10 @@ estuary:
       endpoint_url: <string> # Optional
       queue_url: <string>
       region: <string>
+    - type: pubsub
+      credentials_file: <string> # Path to GCP credentials file
+      project_id: <string>
+      topic: <string>
     - type: rabbitmq
       # Can provide a fully qualified connection URL string
       url: <string>

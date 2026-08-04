@@ -4,7 +4,7 @@ defmodule Estuary.MixProject do
   def project do
     [
       app: :estuary,
-      version: "0.1.1",
+      version: "0.1.2",
       elixir: "~> 1.20",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
@@ -30,6 +30,7 @@ defmodule Estuary.MixProject do
       {:hackney, "~> 1.9"},
       {:jason, "~> 1.4.0"},
       {:saxy, "~> 1.1.0"},
+      {:validate, "~> 1.3.1"},
       {:websockex, "~> 0.5.1"},
       {:yaml_elixir, "~> 2.12.2"}
     ]

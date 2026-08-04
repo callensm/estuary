@@ -19,6 +19,8 @@ defmodule Estuary.Sink do
 
   alias Estuary.Event.LogNotification
 
+  @callback validate(opts :: map()) :: :ok | {:error, [String.t()]}
+
   @callback init(opts :: map()) :: {:ok, state :: term()} | {:error, term()}
 
   @callback handle_event(LogNotification.t(), state :: term()) ::

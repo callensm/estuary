@@ -1,5 +1,39 @@
-defmodule Estuary.Sink.Rabbitmq do
+defmodule Estuary.Sink.Impl.Rabbitmq do
   @behaviour Estuary.Sink
+
+  alias Estuary.Sink.Validation
+
+  @rules %{
+    "url" => [nullable: true, type: :string, url: true],
+    "host" => [nullable: true, type: :string],
+    "port" => [nullable: true, cast: :integer],
+    "username" => [nullable: true, type: :string],
+    "password" => [nullable: true, type: :string],
+    "vhost" => [nullable: true, type: :string],
+    "queue" => [nullable: true, type: :string],
+    "exchange" => [nullable: true, type: :string],
+    "routing_key" => [nullable: true, type: :string],
+    "durable" => [nullable: true, cast: :boolean],
+    "declare" => [nullable: true, cast: :boolean],
+    "exchange_type" => [
+      nullable: true,
+      type: :string,
+      in: ["direct", "topic", "fanout", "headers"]
+    ]
+  }
+
+  @impl true
+  def validate(opts) do
+    field_result = Validation.run(opts, @rules)
+    target_result = validate_target(opts)
+
+    case {field_result, target_result} do
+      {:ok, :ok} -> :ok
+      {:ok, {:error, errors}} -> {:error, errors}
+      {{:error, errors}, :ok} -> {:error, errors}
+      {{:error, a}, {:error, b}} -> {:error, a ++ b}
+    end
+  end
 
   @impl true
   def init(opts) do
@@ -30,6 +64,26 @@ defmodule Estuary.Sink.Rabbitmq do
 
   @impl true
   def terminate(%{conn: conn}), do: AMQP.Connection.close(conn)
+
+  defp validate_target(opts) do
+    queue = Map.get(opts, "queue")
+    exchange = Map.get(opts, "exchange")
+    routing_key = Map.get(opts, "routing_key")
+
+    cond do
+      present?(queue) ->
+        :ok
+
+      present?(exchange) and present?(routing_key) ->
+        :ok
+
+      present?(exchange) ->
+        {:error, ["\"exchange\" requires \"routing_key\" to also be configured"]}
+
+      true ->
+        {:error, ["must set either \"queue\", or \"exchange\" with \"routing_key\""]}
+    end
+  end
 
   defp build_target(%{"exchange" => exchange} = opts)
        when is_binary(exchange) and exchange != "" do
@@ -94,4 +148,6 @@ defmodule Estuary.Sink.Rabbitmq do
   defp truthy?(true), do: true
   defp truthy?("true"), do: true
   defp truthy?(_), do: false
+
+  defp present?(val), do: is_binary(val) and val != ""
 end

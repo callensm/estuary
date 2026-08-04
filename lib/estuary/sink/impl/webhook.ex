@@ -1,22 +1,25 @@
-defmodule Estuary.Sink.Webhook do
+defmodule Estuary.Sink.Impl.Webhook do
   @behaviour Estuary.Sink
 
+  alias Estuary.Sink.Validation
+
+  @rules %{
+    "url" => [required: true, type: :string, url: true],
+    "timeout_ms" => [nullable: true, cast: :integer],
+    "headers" => [nullable: true, type: :map]
+  }
+
   @impl true
-  def init(%{"url" => url} = opts) when is_binary(url) and url != "" do
-    case URI.parse(url) do
-      %URI{scheme: scheme, host: host} when is_binary(scheme) and is_binary(host) ->
-        timeout = opts |> Map.get("timeout_ms", 5_000) |> to_integer()
-        headers = compile_headers(Map.get(opts, "headers", %{}))
-        {:ok, %{url: url, headers: headers, timeout: timeout}}
+  def validate(opts), do: Validation.run(opts, @rules)
 
-      _ ->
-        {:error, {:invalid_url, url}}
+  @impl true
+  def init(opts) do
+    with :ok <- validate(opts) do
+      timeout = opts |> Map.get("timeout_ms", 5_000) |> to_integer()
+      headers = compile_headers(Map.get(opts, "headers", %{}))
+      {:ok, %{url: Map.fetch!(opts, "url"), headers: headers, timeout: timeout}}
     end
-
-    {:ok, %{url: url}}
   end
-
-  def init(_opts), do: {:error, :missing_url}
 
   @impl true
   def handle_event(notification, state) do

@@ -5,6 +5,8 @@ estuary:
   sinks:
     - type: stdout
       format: json
+    - type: file
+      path: ./events.jsonl
     # - type: webhook
     #   url: https://webhook.site/3c808cd3-6695-47c7-9abd-bee8424f9e85
     # - type: sqs

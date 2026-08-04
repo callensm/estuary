@@ -1,15 +1,23 @@
-defmodule Estuary.Sink.Sqs do
+defmodule Estuary.Sink.Impl.Sqs do
   @behaviour Estuary.Sink
+
+  alias Estuary.Sink.Validation
+
+  @rules %{
+    "queue_url" => [required: true, type: :string, url: true],
+    "endpoint_url" => [nullable: true, type: :string, url: true],
+    "region" => [nullable: true, type: :string]
+  }
+
+  @impl true
+  def validate(opts), do: Validation.run(opts, @rules)
 
   @impl true
   def init(%{"queue_url" => queue_url} = opts) when is_binary(queue_url) do
-    case compile_request_opts(opts) do
-      {:ok, request_opts} -> {:ok, %{queue_url: queue_url, request_opts: request_opts}}
-      {:error, reason} -> {:error, reason}
+    with :ok <- validate(opts), {:ok, request_opts} <- compile_request_opts(opts) do
+      {:ok, %{queue_url: Map.fetch!(opts, "queue_url"), request_opts: request_opts}}
     end
   end
-
-  def init(_opts), do: {:error, :missing_queue_url}
 
   @impl true
   def handle_event(notification, state) do

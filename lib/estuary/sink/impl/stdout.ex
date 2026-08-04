@@ -1,9 +1,20 @@
-defmodule Estuary.Sink.Stdout do
+defmodule Estuary.Sink.Impl.Stdout do
   @behaviour Estuary.Sink
+
+  alias Estuary.Sink.Validation
+
+  @rules %{
+    "format" => [nullable: true, type: :string, in: ["json", "pretty"]]
+  }
+
+  @impl true
+  def validate(opts), do: Validation.run(opts, @rules)
 
   @impl true
   def init(opts) do
-    {:ok, %{format: Map.get(opts, "format", "json")}}
+    with :ok <- validate(opts) do
+      {:ok, %{format: Map.get(opts, "format", "json")}}
+    end
   end
 
   @impl true

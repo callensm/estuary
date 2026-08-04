@@ -6,13 +6,7 @@ defmodule Estuary.Sink.Supervisor do
 
   use Supervisor
 
-  @sink_modules %{
-    "file" => Estuary.Sink.File,
-    "rabbitmq" => Estuary.Sink.Rabbitmq,
-    "sqs" => Estuary.Sink.Sqs,
-    "stdout" => Estuary.Sink.Stdout,
-    "webhook" => Estuary.Sink.Webhook
-  }
+  alias Estuary.Sink.Modules
 
   def start_link(sinks), do: Supervisor.start_link(__MODULE__, sinks, name: __MODULE__)
 
@@ -22,16 +16,10 @@ defmodule Estuary.Sink.Supervisor do
       sinks
       |> Enum.with_index()
       |> Enum.map(fn {%{type: type, opts: opts}, idx} ->
-        module = sink_module!(type)
+        module = Modules.sink_module!(type)
         Supervisor.child_spec({Estuary.Sink.Server, {module, opts}}, id: {module, idx})
       end)
 
     Supervisor.init(children, strategy: :one_for_one)
-  end
-
-  defp sink_module!(type) do
-    Map.get(@sink_modules, type) ||
-      raise ArgumentError,
-            "unknown sink type #{inspect(type)} -- expected one of #{inspect(Map.keys(@sink_modules))}"
   end
 end

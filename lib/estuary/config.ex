@@ -83,15 +83,6 @@ defmodule Estuary.Config do
     %{type: type, opts: Map.drop(sink, ["type"])}
   end
 
-  defp sink_from_env("stdout") do
-    %{
-      type: "stdout",
-      opts: %{
-        "format" => System.get_env("ESTUARY_STDOUT_FORMAT", "json")
-      }
-    }
-  end
-
   defp sink_from_env("file") do
     %{
       type: "file",
@@ -101,33 +92,14 @@ defmodule Estuary.Config do
     }
   end
 
-  defp sink_from_env("webhook") do
+  defp sink_from_env("pubsub") do
     %{
-      type: "webhook",
+      type: "pubsub",
       opts: %{
-        "url" => System.get_env("ESTUARY_WEBHOOK_URL"),
-        "timeout_ms" => System.get_env("ESTUARY_WEBHOOK_TIMEOUT_MS")
-      }
-    }
-  end
-
-  defp sink_from_env("sqs") do
-    %{
-      type: "sqs",
-      opts: %{
-        "queue_url" => System.get_env("ESTUARY_SQS_QUEUE_URL"),
-        "region" => System.get_env("ESTUARY_SQS_REGION"),
-        "endpoint_url" => System.get_env("ESTUARY_SQS_ENDPOINT_URL")
-      }
-    }
-  end
-
-  defp sink_from_env("kafka") do
-    %{
-      type: "kafka",
-      opts: %{
-        "brokers" => System.get_env("ESTUARY_KAFKA_BROKERS"),
-        "topic" => System.get_env("ESTUARY_KAFKA_TOPIC")
+        credentials_file: System.get_env("GOOGLE_APPLICATION_CREDENTIALS"),
+        project_id: System.get_env("ESTUARY_PUBSUB_PROJECT_ID", System.get_env("GCP_PROJECT")),
+        topic: System.get_env("ESTUARY_PUBSUB_TOPIC"),
+        host: System.get_env("ESTUARY_PUBSUB_HOST")
       }
     }
   end
@@ -148,6 +120,36 @@ defmodule Estuary.Config do
         "routing_key" => System.get_env("ESTUARY_RABBITMQ_ROUTING_KEY"),
         "durable" => System.get_env("ESTUARY_RABBITMQ_DURABLE"),
         "declare" => System.get_env("ESTUARY_RABBITMQ_DECLARE")
+      }
+    }
+  end
+
+  defp sink_from_env("sqs") do
+    %{
+      type: "sqs",
+      opts: %{
+        "queue_url" => System.get_env("ESTUARY_SQS_QUEUE_URL"),
+        "region" => System.get_env("ESTUARY_SQS_REGION"),
+        "endpoint_url" => System.get_env("ESTUARY_SQS_ENDPOINT_URL")
+      }
+    }
+  end
+
+  defp sink_from_env("stdout") do
+    %{
+      type: "stdout",
+      opts: %{
+        "format" => System.get_env("ESTUARY_STDOUT_FORMAT", "json")
+      }
+    }
+  end
+
+  defp sink_from_env("webhook") do
+    %{
+      type: "webhook",
+      opts: %{
+        "url" => System.get_env("ESTUARY_WEBHOOK_URL"),
+        "timeout_ms" => System.get_env("ESTUARY_WEBHOOK_TIMEOUT_MS")
       }
     }
   end

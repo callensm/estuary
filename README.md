@@ -34,6 +34,7 @@ estuary:
       credentials_file: <string> # Path to GCP credentials file
       project_id: <string>
       topic: <string>
+      host: <string> # Optional, for emulators and defaults to GCP
     - type: rabbitmq
       # Can provide a fully qualified connection URL string
       url: <string>

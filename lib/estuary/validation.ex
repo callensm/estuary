@@ -1,7 +1,7 @@
-defmodule Estuary.Sink.Validation do
+defmodule Estuary.Validation do
   @moduledoc """
   Thin wrapper around the [`validate`](https://hexdocs.pm/validate) hex
-  package for `c:Estuary.Sink.validate/1` implementations: runs a
+  package for `c:Estuary.validate/1` implementations: runs a
   rules map against `opts` and formats the resulting
   `Validate.Validator.Error` structs into the plain string messages the
   `Sink` behaviour returns.

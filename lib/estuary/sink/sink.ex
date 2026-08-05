@@ -17,13 +17,13 @@ defmodule Estuary.Sink do
   sink and drop every event behind it.
   """
 
-  alias Estuary.Event.LogNotification
+  alias Estuary.Logs.Notification
 
   @callback validate(opts :: map()) :: :ok | {:error, [String.t()]}
 
   @callback init(opts :: map()) :: {:ok, state :: term()} | {:error, term()}
 
-  @callback handle_event(LogNotification.t(), state :: term()) ::
+  @callback handle_event(Notification.t(), state :: term()) ::
               {:ok, term()} | {:error, term(), term()}
 
   @callback terminate(state :: term()) :: :ok

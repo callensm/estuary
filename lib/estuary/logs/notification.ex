@@ -1,9 +1,9 @@
-defmodule Estuary.Event.LogNotification do
+defmodule Estuary.Logs.Notification do
   @moduledoc """
   A single parsed `logsNotification` event for one transaction.
   """
 
-  alias Estuary.Event.Invocation
+  alias Estuary.Logs.Invocation
 
   @type t :: %__MODULE__{
           error: term(),

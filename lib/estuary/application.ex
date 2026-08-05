@@ -1,11 +1,15 @@
 defmodule Estuary.Application do
   use Application
 
+  require Logger
+
   alias Estuary.Config
 
   @impl Application
   def start(_type, _args) do
     config = Config.load()
+
+    Logger.info(inspect(config, pretty: true))
 
     children = [
       {
@@ -24,7 +28,7 @@ defmodule Estuary.Application do
         [
           url: config.ws_url,
           commitment: config.commitment,
-          program_id: config.program_id
+          program_id: config.program.id
         ]
       }
     ]

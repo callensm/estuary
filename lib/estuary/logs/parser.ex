@@ -1,6 +1,6 @@
-defmodule Estuary.LogParser do
-  alias Estuary.Event.LogNotification
-  alias Estuary.Event.Invocation
+defmodule Estuary.Logs.Parser do
+  alias Estuary.Logs.Notification
+  alias Estuary.Logs.Invocation
 
   @invoke_regex ~r/^Program (\w+) invoke \[(\d+)\]$/
   @consumed_regex ~r/^Program (\w+) consumed (\d+) of (\d+) compute units$/
@@ -11,12 +11,12 @@ defmodule Estuary.LogParser do
   @data_prefix "Program data: "
 
   @spec parse(%{slot: term(), signature: term(), error: term(), logs: [String.t()]}) ::
-          LogNotification.t()
+          Notification.t()
   def parse(%{slot: slot, signature: signature, error: error, logs: logs}) do
     {completed, dangling} = Enum.reduce(logs, {[], []}, &process_line/2)
     completed = Enum.reduce(dangling, completed, fn frame, acc -> [finalize(frame) | acc] end)
 
-    %LogNotification{
+    %Notification{
       error: error,
       invocations: Enum.reverse(completed),
       raw_logs: logs,

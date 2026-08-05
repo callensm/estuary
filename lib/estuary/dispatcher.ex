@@ -1,12 +1,12 @@
 defmodule Estuary.Dispatcher do
   @moduledoc """
-  Fans out each parsed `Estuary.Event.LogNotification` to every running sink. Wired in as
+  Fans out each parsed `Estuary.Logs.Notification` to every running sink. Wired in as
   the websocket client's `:handler` by default (see `Application.start/2`).
   """
 
-  alias Estuary.Event.LogNotification
+  alias Estuary.Logs.Notification
 
-  @spec broadcast(LogNotification.t()) :: :ok
+  @spec broadcast(Notification.t()) :: :ok
   def broadcast(notification) do
     Registry.dispatch(Estuary.SinkRegistry, :sink, fn entries ->
       for {pid, _module} <- entries do

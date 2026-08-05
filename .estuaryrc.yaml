@@ -1,16 +1,17 @@
 estuary:
   ws_url: ws://127.0.0.1:8900
   commitment: confirmed
-  program_id: "11111111111111111111111111111111"
+  program:
+    id: "11111111111111111111111111111111"
   sinks:
     - type: stdout
       format: json
     # - type: file
     #   path: ./events.jsonl
-    - type: pubsub
-      credentials_file: ./gcp.json
-      project_id: abc123
-      topic: estuary-test
+    # - type: pubsub
+    #   credentials_file: ./gcp.json
+    #   project_id: abc123
+    #   topic: estuary-test
     # - type: webhook
     #   url: https://webhook.site/...
     # - type: sqs

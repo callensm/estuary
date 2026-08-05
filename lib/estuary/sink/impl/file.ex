@@ -1,7 +1,7 @@
 defmodule Estuary.Sink.Impl.File do
   @behaviour Estuary.Sink
 
-  alias Estuary.Sink.Validation
+  alias Estuary.Validation
 
   @rules %{
     "path" => [required: true, type: :string, ends_with: "jsonl"]

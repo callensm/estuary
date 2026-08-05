@@ -1,16 +1,59 @@
 defmodule Estuary.Config do
   require Logger
 
+  alias Estuary.Validation
+
   @default_ws_url "ws://127.0.0.1:8900"
   @default_commitment "confirmed"
-  @default_program_id "11111111111111111111111111111111"
 
-  @type sink_config :: %{type: String.t(), opts: map()}
+  @rules %{
+    "ws_url" => [required: true, type: :string, url: true],
+    "commitment" => [
+      nullable: true,
+      type: :string,
+      in: ["processed", "confirmed", "finalized"]
+    ],
+    "program" => [
+      required: true,
+      type: :map,
+      map: %{
+        "id" => [required: true, type: :string],
+        "idl" => [nullable: true, type: :string],
+        "subscribed_events" => [
+          nullable: true,
+          type: :list,
+          list: [required: true, type: :string]
+        ]
+      }
+    ],
+    "sinks" => [
+      nullable: true,
+      type: :list,
+      list: [
+        required: true,
+        type: :map,
+        map: %{
+          "type" => [required: true, type: :string]
+        }
+      ]
+    ]
+  }
+
+  @type program_config :: %{
+          id: String.t(),
+          idl: String.t() | nil,
+          subscribed_events: [String.t()] | nil
+        }
+
+  @type sink_config :: %{
+          type: String.t(),
+          opts: map()
+        }
 
   @type t :: %{
           ws_url: String.t(),
           commitment: String.t(),
-          program_id: String.t(),
+          program: program_config(),
           sinks: [sink_config()]
         }
 
@@ -19,12 +62,14 @@ defmodule Estuary.Config do
     raw = read_yaml(path || find_config_path())
     estuary = Map.get(raw, "estuary", %{})
 
-    %{
-      ws_url: coalesce(estuary, "ws_url", "ESTUARY_WS_URL", @default_ws_url),
-      commitment: coalesce(estuary, "commitment", "ESTUARY_COMMITMENT", @default_commitment),
-      program_id: coalesce(estuary, "program_id", "ESTUARY_PROGRAM_ID", @default_program_id),
-      sinks: load_sinks(estuary)
-    }
+    with :ok <- Validation.run(estuary, @rules) do
+      %{
+        ws_url: coalesce(estuary, "ws_url", "ESTUARY_WS_URL", @default_ws_url),
+        commitment: coalesce(estuary, "commitment", "ESTUARY_COMMITMENT", @default_commitment),
+        program: load_program_config!(estuary),
+        sinks: load_sink_configs(estuary)
+      }
+    end
   end
 
   defp find_config_path() do
@@ -71,11 +116,21 @@ defmodule Estuary.Config do
     end
   end
 
-  defp load_sinks(%{"sinks" => sinks}) when is_list(sinks) and sinks != [] do
+  defp load_program_config!(%{"program" => %{"id" => id} = program}) do
+    %{
+      id: id,
+      idl: Map.get(program, "idl"),
+      subscribed_events: Map.get(program, "subscribed_events", [])
+    }
+  end
+
+  defp load_program_config!(_data), do: raise(ArgumentError, "missing program config")
+
+  defp load_sink_configs(%{"sinks" => sinks}) when is_list(sinks) and sinks != [] do
     Enum.map(sinks, &normalize_sink/1)
   end
 
-  defp load_sinks(_data) do
+  defp load_sink_configs(_data) do
     [sink_from_env(System.get_env("ESTUARY_SINK_TYPE", "stdout"))]
   end
 

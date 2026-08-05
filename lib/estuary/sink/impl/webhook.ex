@@ -1,7 +1,7 @@
 defmodule Estuary.Sink.Impl.Webhook do
   @behaviour Estuary.Sink
 
-  alias Estuary.Sink.Validation
+  alias Estuary.Validation
 
   @rules %{
     "url" => [required: true, type: :string, url: true],

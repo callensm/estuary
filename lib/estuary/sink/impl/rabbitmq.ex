@@ -1,7 +1,7 @@
 defmodule Estuary.Sink.Impl.Rabbitmq do
   @behaviour Estuary.Sink
 
-  alias Estuary.Sink.Validation
+  alias Estuary.Validation
 
   @rules %{
     "url" => [nullable: true, type: :string, url: true],

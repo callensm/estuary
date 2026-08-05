@@ -1,7 +1,7 @@
 defmodule Estuary.Sink.Impl.Pubsub do
   @behaviour Estuary.Sink
 
-  alias Estuary.Sink.Validation
+  alias Estuary.Validation
 
   @rules %{
     "project_id" => [required: true, type: :string],

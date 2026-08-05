@@ -1,7 +1,7 @@
 defmodule Estuary.Sink.Impl.Stdout do
   @behaviour Estuary.Sink
 
-  alias Estuary.Sink.Validation
+  alias Estuary.Validation
 
   @rules %{
     "format" => [nullable: true, type: :string, in: ["json", "pretty"]]

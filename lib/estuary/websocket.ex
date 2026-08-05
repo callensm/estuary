@@ -3,7 +3,7 @@ defmodule Estuary.WebSocket do
 
   require Logger
 
-  alias Estuary.LogParser
+  alias Estuary.Logs.Parser
   alias Estuary.WebSocket.State
 
   defmodule State do
@@ -99,7 +99,7 @@ defmodule Estuary.WebSocket do
          state
        ) do
     notification =
-      LogParser.parse(%{
+      Parser.parse(%{
         error: Map.get(value, "err"),
         logs: Map.get(value, "logs", []),
         signature: Map.get(value, "signature"),

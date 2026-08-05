@@ -15,7 +15,10 @@
 estuary:
   ws_url: <string>
   commitment: processed | confirmed | finalized
-  program_id: <string>
+  program:
+    id: <string>
+    idl: <string> # Optional IDL JSON file path for parsing
+    subscribed_events: [<string>] # List of IDL/Borsh parsable event names to dispatch
   sinks: # Must configure at least one sink type
     - type: stdout
       format: json | pretty

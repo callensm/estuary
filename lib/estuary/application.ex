@@ -1,9 +1,9 @@
 defmodule Estuary.Application do
   use Application
 
-  require Logger
-
   alias Estuary.Config
+
+  require Logger
 
   @impl Application
   def start(_type, _args) do

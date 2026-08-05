@@ -1,12 +1,13 @@
 defmodule Estuary.Config do
   require Logger
 
+  alias Estuary.Anchor.Idl
   alias Estuary.Validation
 
   @default_ws_url "ws://127.0.0.1:8900"
   @default_commitment "confirmed"
 
-  @rules %{
+  @rc_rules %{
     "ws_url" => [required: true, type: :string, url: true],
     "commitment" => [
       nullable: true,
@@ -41,7 +42,7 @@ defmodule Estuary.Config do
 
   @type program_config :: %{
           id: String.t(),
-          idl: String.t() | nil,
+          idl: Idl.t() | nil,
           subscribed_events: [String.t()] | nil
         }
 
@@ -62,7 +63,7 @@ defmodule Estuary.Config do
     raw = read_yaml(path || find_config_path())
     estuary = Map.get(raw, "estuary", %{})
 
-    with :ok <- Validation.run(estuary, @rules) do
+    with :ok <- Validation.run(estuary, @rc_rules) do
       %{
         ws_url: coalesce(estuary, "ws_url", "ESTUARY_WS_URL", @default_ws_url),
         commitment: coalesce(estuary, "commitment", "ESTUARY_COMMITMENT", @default_commitment),
@@ -119,7 +120,7 @@ defmodule Estuary.Config do
   defp load_program_config!(%{"program" => %{"id" => id} = program}) do
     %{
       id: id,
-      idl: Map.get(program, "idl"),
+      idl: Map.get(program, "idl") |> Idl.load!(),
       subscribed_events: Map.get(program, "subscribed_events", [])
     }
   end

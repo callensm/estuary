@@ -3,6 +3,7 @@ estuary:
   commitment: confirmed
   program:
     id: "11111111111111111111111111111111"
+    idl: ./samples/idl.json
   sinks:
     - type: stdout
       format: json

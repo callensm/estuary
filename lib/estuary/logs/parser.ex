@@ -1,6 +1,6 @@
 defmodule Estuary.Logs.Parser do
-  alias Estuary.Logs.Notification
   alias Estuary.Logs.Invocation
+  alias Estuary.Logs.Notification
 
   @invoke_regex ~r/^Program (\w+) invoke \[(\d+)\]$/
   @consumed_regex ~r/^Program (\w+) consumed (\d+) of (\d+) compute units$/
@@ -13,12 +13,9 @@ defmodule Estuary.Logs.Parser do
   @spec parse(%{slot: term(), signature: term(), error: term(), logs: [String.t()]}) ::
           Notification.t()
   def parse(%{slot: slot, signature: signature, error: error, logs: logs}) do
-    {completed, dangling} = Enum.reduce(logs, {[], []}, &process_line/2)
-    completed = Enum.reduce(dangling, completed, fn frame, acc -> [finalize(frame) | acc] end)
-
     %Notification{
       error: error,
-      invocations: Enum.reverse(completed),
+      invocations: parse_logs(logs),
       raw_logs: logs,
       signature: signature,
       slot: slot
@@ -31,6 +28,14 @@ defmodule Estuary.Logs.Parser do
       here = if inv.program_id == program_id, do: [inv], else: []
       here ++ find_invocations(inv.children, program_id)
     end)
+  end
+
+  @spec parse_logs([String.t()]) :: [Invocation.t()]
+  def parse_logs(logs) do
+    {completed, dangling} = Enum.reduce(logs, {[], []}, &process_line/2)
+
+    Enum.reduce(dangling, completed, fn frame, acc -> [finalize(frame) | acc] end)
+    |> Enum.reverse()
   end
 
   defp process_line(line, {completed, stack}) do

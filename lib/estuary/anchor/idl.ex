@@ -8,7 +8,7 @@ defmodule Estuary.Anchor.Idl do
         }
 
   @type t :: %{
-          events: %{String.t() => event()},
+          events: [event()],
           types: %{String.t() => map()}
         }
 
@@ -20,22 +20,22 @@ defmodule Estuary.Anchor.Idl do
   @spec from_map(map()) :: t()
   def from_map(idl) do
     types = idl |> Map.get("types", []) |> Map.new(&{&1["name"], &1})
-    events = idl |> Map.get("events", []) |> Enum.reduce(%{}, &resolve_event(&1, &2, types))
+    events = idl |> Map.get("events", []) |> Enum.map(&resolve_event(&1, types))
     %{events: events, types: types}
   end
 
-  defp resolve_event(%{"name" => name, "fields" => fields} = event, acc, _types) do
-    Map.put(acc, name, %{name: name, discriminator: discriminator(event, name), fields: fields})
+  defp resolve_event(%{"name" => name, "fields" => fields} = event, _types) do
+    %{name: name, discriminator: discriminator(event, name), fields: fields}
   end
 
-  defp resolve_event(%{"name" => name} = event, acc, types) do
+  defp resolve_event(%{"name" => name} = event, types) do
     fields =
       case Map.get(types, name) do
         %{"type" => %{"kind" => "struct", "fields" => fields}} -> fields
         _ -> []
       end
 
-    Map.put(acc, name, %{name: name, discriminator: discriminator(event, name), fields: fields})
+    %{name: name, discriminator: discriminator(event, name), fields: fields}
   end
 
   defp discriminator(%{"discriminator" => bytes}, _name) when is_list(bytes),

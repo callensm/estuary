@@ -3,22 +3,31 @@ defmodule Estuary.LogsParserTest do
 
   require Logger
 
+  alias Estuary.Config
   alias Estuary.Logs.Parser
 
-  test "parses list of log strings" do
-    logs = [
-      "Program ComputeBudget111111111111111111111111111111 invoke [1]",
-      "Program ComputeBudget111111111111111111111111111111 success",
-      "Program xnft5aaToUM4UFETUQfj7NUDUBdvYHTVhNFThEYTm55 invoke [1]",
-      "Program log: Instruction: CreateInstall",
-      "Program 11111111111111111111111111111111 invoke [2]",
-      "Program 11111111111111111111111111111111 success",
-      "Program data: zfkKUcOYon4Gca5r9bMRjVV0/hfOjFms70hEyOmWWJnrrA2O5nIMsA36lJIOHmXFX9JSOu7E8gvENIahQI+e9mmJ9YF3bZa8",
-      "Program xnft5aaToUM4UFETUQfj7NUDUBdvYHTVhNFThEYTm55 consumed 17114 of 199850 compute units",
-      "Program xnft5aaToUM4UFETUQfj7NUDUBdvYHTVhNFThEYTm55 success"
-    ]
+  setup do
+    config = Config.load()
 
-    invocations = Parser.parse_logs(logs)
+    {:ok,
+     %{
+       idl: Map.get(config.program, :idl),
+       logs: [
+         "Program ComputeBudget111111111111111111111111111111 invoke [1]",
+         "Program ComputeBudget111111111111111111111111111111 success",
+         "Program xnft5aaToUM4UFETUQfj7NUDUBdvYHTVhNFThEYTm55 invoke [1]",
+         "Program log: Instruction: CreateInstall",
+         "Program 11111111111111111111111111111111 invoke [2]",
+         "Program 11111111111111111111111111111111 success",
+         "Program data: zfkKUcOYon4Gca5r9bMRjVV0/hfOjFms70hEyOmWWJnrrA2O5nIMsA36lJIOHmXFX9JSOu7E8gvENIahQI+e9mmJ9YF3bZa8",
+         "Program xnft5aaToUM4UFETUQfj7NUDUBdvYHTVhNFThEYTm55 consumed 17114 of 199850 compute units",
+         "Program xnft5aaToUM4UFETUQfj7NUDUBdvYHTVhNFThEYTm55 success"
+       ]
+     }}
+  end
+
+  test "parses list of log strings", %{idl: idl, logs: logs} do
+    invocations = Parser.parse_logs(logs, idl)
 
     Logger.info(inspect(invocations, pretty: true))
 

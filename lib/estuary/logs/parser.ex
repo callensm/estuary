@@ -1,4 +1,6 @@
 defmodule Estuary.Logs.Parser do
+  alias Estuary.Anchor.Event
+  alias Estuary.Anchor.Idl
   alias Estuary.Logs.Invocation
   alias Estuary.Logs.Notification
 
@@ -10,32 +12,27 @@ defmodule Estuary.Logs.Parser do
   @log_prefix "Program log: "
   @data_prefix "Program data: "
 
-  @spec parse(%{slot: term(), signature: term(), error: term(), logs: [String.t()]}) ::
+  @spec parse(%{slot: term(), signature: term(), error: term(), logs: [String.t()]}, Idl.t()) ::
           Notification.t()
-  def parse(%{slot: slot, signature: signature, error: error, logs: logs}) do
+  def parse(%{slot: slot, signature: signature, error: error, logs: logs}, idl) do
     %Notification{
       error: error,
-      invocations: parse_logs(logs),
+      invocations: parse_logs(logs, idl),
       raw_logs: logs,
       signature: signature,
       slot: slot
     }
   end
 
-  @spec find_invocations([Invocation.t()], String.t()) :: [Invocation.t()]
-  def find_invocations(invocations, program_id) do
-    Enum.flat_map(invocations, fn inv ->
-      here = if inv.program_id == program_id, do: [inv], else: []
-      here ++ find_invocations(inv.children, program_id)
-    end)
-  end
-
-  @spec parse_logs([String.t()]) :: [Invocation.t()]
-  def parse_logs(logs) do
+  @spec parse_logs([String.t()], Idl.t() | nil) :: [Invocation.t()]
+  def parse_logs(logs, idl) do
     {completed, dangling} = Enum.reduce(logs, {[], []}, &process_line/2)
 
-    Enum.reduce(dangling, completed, fn frame, acc -> [finalize(frame) | acc] end)
-    |> Enum.reverse()
+    invs =
+      Enum.reduce(dangling, completed, fn frame, acc -> [finalize(frame) | acc] end)
+      |> Enum.reverse()
+
+    if is_nil(idl), do: invs, else: Enum.map(invs, &Event.enrich_invocation(&1, idl))
   end
 
   defp process_line(line, {completed, stack}) do

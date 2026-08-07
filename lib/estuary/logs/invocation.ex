@@ -16,7 +16,7 @@ defmodule Estuary.Logs.Invocation do
           compute_units_limit: non_neg_integer() | nil,
           logs: [String.t()],
           data: [binary()],
-          return_data: {String.t(), binary()} | nil,
+          anchor_events: [map()] | nil,
           children: [t()]
         }
 
@@ -31,7 +31,7 @@ defmodule Estuary.Logs.Invocation do
     compute_units_limit: nil,
     logs: [],
     data: [],
-    return_data: nil,
+    anchor_events: nil,
     children: []
   ]
 end

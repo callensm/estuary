@@ -3,6 +3,7 @@ defmodule Estuary.WebSocket do
 
   require Logger
 
+  alias Estuary.Config
   alias Estuary.Logs.Parser
   alias Estuary.WebSocket.State
 
@@ -10,12 +11,12 @@ defmodule Estuary.WebSocket do
     @moduledoc false
     @type t :: %__MODULE__{
             commitment: String.t(),
-            program_id: String.t(),
+            program: Config.program_config(),
             subscription_id: non_neg_integer | nil,
             url: String.t()
           }
 
-    @enforce_keys [:commitment, :program_id, :subscription_id, :url]
+    @enforce_keys [:commitment, :program, :subscription_id, :url]
     defstruct @enforce_keys
   end
 
@@ -23,7 +24,7 @@ defmodule Estuary.WebSocket do
 
   @typep websocket_opts :: [
            {:commitment, String.t()},
-           {:program_id, String.t()},
+           {:program, String.t()},
            {:subscription_id, non_neg_integer() | nil},
            {:url, String.t()}
          ]
@@ -34,7 +35,7 @@ defmodule Estuary.WebSocket do
 
     state = %State{
       commitment: Keyword.fetch!(opts, :commitment),
-      program_id: Keyword.fetch!(opts, :program_id),
+      program: Keyword.fetch!(opts, :program),
       subscription_id: nil,
       url: url
     }
@@ -44,9 +45,9 @@ defmodule Estuary.WebSocket do
 
   @impl true
   def handle_connect(_conn, state) do
-    Logger.info("Connected to #{state.url}, subscribing to #{state.program_id}")
+    Logger.info("Connected to #{state.url}, subscribing to #{state.program.id}")
 
-    WebSockex.cast(self(), {:send_message, subscribe_frame(state.program_id, state.commitment)})
+    WebSockex.cast(self(), {:send_message, subscribe_frame(state.program.id, state.commitment)})
 
     {:ok, state}
   end
@@ -99,19 +100,21 @@ defmodule Estuary.WebSocket do
          state
        ) do
     notification =
-      Parser.parse(%{
-        error: Map.get(value, "err"),
-        logs: Map.get(value, "logs", []),
-        signature: Map.get(value, "signature"),
-        slot: Map.get(context, "slot")
-      })
+      Parser.parse(
+        %{
+          error: Map.get(value, "err"),
+          logs: Map.get(value, "logs", []),
+          signature: Map.get(value, "signature"),
+          slot: Map.get(context, "slot")
+        },
+        Map.get(state.program, :idl)
+      )
 
     Estuary.Dispatcher.broadcast(notification)
 
     {:ok, state}
   end
 
-  @spec subscribe_frame(String.t(), String.t()) :: String.t()
   defp subscribe_frame(program_id, commitment) do
     Jason.encode!(%{
       id: @subscription_request_id,

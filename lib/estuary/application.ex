@@ -28,7 +28,7 @@ defmodule Estuary.Application do
         [
           url: config.ws_url,
           commitment: config.commitment,
-          program_id: config.program.id
+          program: config.program
         ]
       }
     ]

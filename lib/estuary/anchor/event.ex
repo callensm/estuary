@@ -21,8 +21,11 @@ defmodule Estuary.Anchor.Event do
     }
   end
 
-  @spec discriminator(String.t()) :: binary()
-  def discriminator(event_name) do
+  @spec discriminator(map(), String.t()) :: binary()
+  def discriminator(%{"discriminator" => bytes}, _event_name) when is_list(bytes),
+    do: :binary.list_to_bin(bytes)
+
+  def discriminator(_event, event_name) do
     :crypto.hash(:sha256, "event:" <> event_name)
     |> binary_part(0, 8)
   end

@@ -4,10 +4,11 @@ defmodule Estuary.MixProject do
   def project do
     [
       app: :estuary,
-      version: "0.1.2",
+      version: "0.1.3",
       elixir: "~> 1.20",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
+      aliases: aliases(),
       releases: releases(),
       license: ["Apache-2.0"]
     ]
@@ -35,6 +36,10 @@ defmodule Estuary.MixProject do
       {:websockex, "~> 0.5.1"},
       {:yaml_elixir, "~> 2.12.2"}
     ]
+  end
+
+  defp aliases do
+    [test: "test --no-start"]
   end
 
   defp releases do

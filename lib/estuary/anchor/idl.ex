@@ -25,7 +25,7 @@ defmodule Estuary.Anchor.Idl do
   end
 
   defp resolve_event(%{"name" => name, "fields" => fields} = event, _types) do
-    %{name: name, discriminator: discriminator(event, name), fields: fields}
+    %{name: name, discriminator: Event.discriminator(event, name), fields: fields}
   end
 
   defp resolve_event(%{"name" => name} = event, types) do
@@ -35,11 +35,6 @@ defmodule Estuary.Anchor.Idl do
         _ -> []
       end
 
-    %{name: name, discriminator: discriminator(event, name), fields: fields}
+    %{name: name, discriminator: Event.discriminator(event, name), fields: fields}
   end
-
-  defp discriminator(%{"discriminator" => bytes}, _name) when is_list(bytes),
-    do: :binary.list_to_bin(bytes)
-
-  defp discriminator(_event, name), do: Event.discriminator(name)
 end

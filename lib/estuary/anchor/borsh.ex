@@ -111,6 +111,9 @@ defmodule Estuary.Anchor.Borsh do
       {:ok, %{"type" => %{"kind" => "struct", "fields" => fields}}} ->
         decode_fields(bin, fields, types)
 
+      {:ok, %{"type" => %{"kind" => "enum", "variants" => variants}}} ->
+        decode_variants(bin, variants, types)
+
       {:ok, %{"type" => %{"kind" => other}}} ->
         {:error, {:unsupported_type, name, other}}
 
@@ -120,6 +123,16 @@ defmodule Estuary.Anchor.Borsh do
   end
 
   defp decode_type(_bin, type, _types), do: {:error, {:unsupported_type, type}}
+
+  defp decode_variants(<<value::little-unsigned-8, rest::binary>>, variants, _types) do
+    case Enum.at(variants, value) do
+      %{"name" => name} ->
+        {:ok, name, rest}
+
+      _ ->
+        {:error, {:invalid_enum_value, value}}
+    end
+  end
 
   defp defined_name(name) when is_binary(name), do: name
   defp defined_name(%{"name" => name}), do: name

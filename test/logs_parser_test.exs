@@ -1,5 +1,5 @@
 defmodule Estuary.LogsParserTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: true
 
   require Logger
 
@@ -20,6 +20,7 @@ defmodule Estuary.LogsParserTest do
          "Program 11111111111111111111111111111111 invoke [2]",
          "Program 11111111111111111111111111111111 success",
          "Program data: zfkKUcOYon4Gca5r9bMRjVV0/hfOjFms70hEyOmWWJnrrA2O5nIMsA36lJIOHmXFX9JSOu7E8gvENIahQI+e9mmJ9YF3bZa8",
+         "Program data: ofqaJZ/07UoCcpRiKu/z0QL+CExgqZGnBCjizyjE8xCJaPlJ2Uc+l/U=",
          "Program xnft5aaToUM4UFETUQfj7NUDUBdvYHTVhNFThEYTm55 consumed 17114 of 199850 compute units",
          "Program xnft5aaToUM4UFETUQfj7NUDUBdvYHTVhNFThEYTm55 success"
        ]
@@ -31,6 +32,6 @@ defmodule Estuary.LogsParserTest do
 
     Logger.info(inspect(invocations, pretty: true))
 
-    assert length(invocations) == 2 and length(Enum.at(invocations, 1).data) == 1
+    assert length(invocations) == 2 and length(Enum.at(invocations, 1).data) == 2
   end
 end

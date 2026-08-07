@@ -71,17 +71,21 @@ jobs:
 
       - name: Generate Checksum
         run: |
+          mv \
+            "_build/prod/estuary-${VERSION}.tar.gz" \
+            "estuary-${VERSION}-${{ matrix.os }}-${{ matrix.arch }}.tar.gz"
+
           sha256sum \
-            "_build/prod/estuary-${VERSION}-${{ matrix.os }}-${{ matrix.arch }}.tar.gz" \
-            "_build/prod/estuary-${VERSION}-${{ matrix.os }}-${{ matrix.arch }}.tar.gz.sha256"
+            "estuary-${VERSION}-${{ matrix.os }}-${{ matrix.arch }}.tar.gz" \
+            > "estuary-${VERSION}-${{ matrix.os }}-${{ matrix.arch }}.tar.gz.sha256"
 
       - name: Upload Release Artifacts
         uses: actions/upload-artifact@v7
         with:
           name: estuary-${{ matrix.os }}-${{ matrix.arch }}
           path: |
-            _build/prod/estuary-${{ env.VERSION }}-${{ matrix.os }}-${{ matrix.arch }}.tar.gz
-            _build/prod/estuary-${{ env.VERSION }}-${{ matrix.os }}-${{ matrix.arch }}.tar.gz.sha256
+            estuary-${{ env.VERSION }}-${{ matrix.os }}-${{ matrix.arch }}.tar.gz
+            estuary-${{ env.VERSION }}-${{ matrix.os }}-${{ matrix.arch }}.tar.gz.sha256
 
   release:
     name: Publish Release

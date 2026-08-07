@@ -46,6 +46,7 @@ defmodule Estuary.MixProject do
     [
       estuary: [
         include_erts: true,
+        include_executables_for: [:unix],
         steps: [:assemble, :tar]
       ]
     ]

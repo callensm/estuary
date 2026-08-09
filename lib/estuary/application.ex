@@ -1,28 +1,17 @@
 defmodule Estuary.Application do
   use Application
 
-  alias Estuary.Config
-
   require Logger
 
   @impl Application
   def start(_type, _args) do
-    config = Config.load()
+    config = Estuary.Config.load()
 
     Logger.info(inspect(config, pretty: true))
 
     children = [
-      {
-        Registry,
-        [
-          keys: {:duplicate, :key},
-          name: Estuary.SinkRegistry
-        ]
-      },
-      {
-        Estuary.Sink.Supervisor,
-        config.sinks
-      },
+      {Registry, [keys: {:duplicate, :key}, name: Estuary.SinkRegistry]},
+      {Estuary.Sink.Supervisor, config.sinks},
       {
         Estuary.WebSocket,
         [
@@ -33,9 +22,6 @@ defmodule Estuary.Application do
       }
     ]
 
-    # See https://hexdocs.pm/elixir/Supervisor.html
-    # for other strategies and supported options
-    opts = [strategy: :one_for_one, name: Estuary.Supervisor]
-    Supervisor.start_link(children, opts)
+    Supervisor.start_link(children, strategy: :one_for_one, name: Estuary.Supervisor)
   end
 end

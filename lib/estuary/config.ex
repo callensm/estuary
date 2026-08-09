@@ -60,8 +60,7 @@ defmodule Estuary.Config do
 
   @spec load(String.t() | nil) :: t()
   def load(path \\ nil) do
-    raw = read_yaml(path || find_config_path())
-    estuary = Map.get(raw, "estuary", %{})
+    estuary = read_yaml(path || find_config_path())
 
     with :ok <- Validation.run(estuary, @rc_rules) do
       %{
@@ -94,7 +93,7 @@ defmodule Estuary.Config do
   defp read_yaml(path) do
     case YamlElixir.read_from_file(path) do
       {:ok, data} when is_map(data) ->
-        Logger.info("Configuration loaded from #{path}: \n#{inspect(data)}")
+        Logger.info("Configuration loaded from #{path}")
         data
 
       {:ok, _} ->

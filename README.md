@@ -2,6 +2,7 @@
   <h1>Estuary</h1>
 
   <p>
+    <img alt="GitHub Release" src="https://img.shields.io/github/v/release/callensm/estuary">
     <img alt="GitHub License" src="https://img.shields.io/github/license/callensm/estuary?color=blue">
     <img alt="GitHub Actions Workflow Status" src="https://img.shields.io/github/actions/workflow/status/callensm/estuary/ci.yaml">
   </p>

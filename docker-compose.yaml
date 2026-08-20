@@ -1,4 +1,15 @@
 services:
+  # estuary:
+  #   image: estuary:latest
+  #   container_name: estuary
+  #   environment:
+  #     ESTUARY_CONFIG: /estuary/.estuaryrc.yaml
+  #   extra_hosts:
+  #     - host.docker.internal:host-gateway
+  #   volumes:
+  #     - ./samples:/estuary/samples
+  #     - ./.estuaryrc.yaml:/estuary/.estuaryrc.yaml:ro
+
   # elasticmq:
   #   image: softwaremill/elasticmq-native:latest
   #   ports:
@@ -27,7 +38,15 @@ services:
     image: google/cloud-sdk:emulators
     container_name: pubsub
     entrypoint: gcloud
-    command: ["beta", "emulators", "pubsub", "start", "--project=abc123", "--host-port=0.0.0.0:8085"]
+    command:
+      [
+        "beta",
+        "emulators",
+        "pubsub",
+        "start",
+        "--project=abc123",
+        "--host-port=0.0.0.0:8085",
+      ]
     ports:
       - "8085:8085"
 

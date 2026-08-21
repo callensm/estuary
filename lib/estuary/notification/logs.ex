@@ -1,4 +1,4 @@
-defmodule Estuary.Logs.Notification do
+defmodule Estuary.Notification.Logs do
   @moduledoc """
   A single parsed `logsNotification` event for one transaction.
   """

@@ -11,7 +11,7 @@ defmodule Estuary.LogsParserTest do
 
     {:ok,
      %{
-       idl: Map.get(config.program, :idl),
+       idl: config.program.idl,
        logs: [
          "Program ComputeBudget111111111111111111111111111111 invoke [1]",
          "Program ComputeBudget111111111111111111111111111111 success",
@@ -29,8 +29,6 @@ defmodule Estuary.LogsParserTest do
 
   test "parses list of log strings", %{idl: idl, logs: logs} do
     invocations = Parser.parse_logs(logs, idl)
-
-    Logger.info(inspect(invocations, pretty: true))
 
     assert length(invocations) == 2 and length(Enum.at(invocations, 1).data) == 2
   end

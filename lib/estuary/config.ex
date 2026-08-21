@@ -20,6 +20,11 @@ defmodule Estuary.Config do
       map: %{
         "id" => [required: true, type: :string],
         "idl" => [nullable: true, type: :string],
+        "subscribed_account_types" => [
+          nullable: true,
+          type: :list,
+          list: [required: true, type: :string]
+        ],
         "subscribed_events" => [
           nullable: true,
           type: :list,
@@ -43,6 +48,7 @@ defmodule Estuary.Config do
   @type program_config :: %{
           id: String.t(),
           idl: Idl.t() | nil,
+          subscribed_account_types: [String.t()] | nil,
           subscribed_events: [String.t()] | nil
         }
 
@@ -120,6 +126,7 @@ defmodule Estuary.Config do
     %{
       id: id,
       idl: Map.get(program, "idl") |> Idl.load!(),
+      subscribed_account_types: Map.get(program, "subscribed_account_types", []),
       subscribed_events: Map.get(program, "subscribed_events", [])
     }
   end

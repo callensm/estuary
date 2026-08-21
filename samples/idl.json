@@ -1,6 +1,11 @@
 {
   "vesrion": "0.0.0",
   "name": "test",
+  "accounts": [
+    {
+      "name": "Install"
+    }
+  ],
   "events": [
     {
       "name": "AccessGranted",
@@ -62,6 +67,36 @@
     }
   ],
   "types": [
+    {
+      "name": "Install",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "type": "publicKey"
+          },
+          {
+            "name": "xnft",
+            "type": "publicKey"
+          },
+          {
+            "name": "masterMetadata",
+            "type": "publicKey"
+          },
+          {
+            "name": "edition",
+            "type": "u64"
+          },
+          {
+            "name": "reserved",
+            "type": {
+              "array": ["u8", 64]
+            }
+          }
+        ]
+      }
+    },
     {
       "name": "Tag",
       "type": {

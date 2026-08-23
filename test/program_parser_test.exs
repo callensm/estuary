@@ -1,8 +1,6 @@
 defmodule Estuary.ProgramParserTest do
   use ExUnit.Case, async: true
 
-  require Logger
-
   alias Estuary.Anchor.Account
   alias Estuary.Config
   alias Estuary.Notification.Program

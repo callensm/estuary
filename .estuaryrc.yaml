@@ -4,8 +4,8 @@ commitment: confirmed
 program:
   id: "11111111111111111111111111111111"
   idl: ./samples/idl.json
-  subscribed_account_types:
-    - Install
+  log_notification: true
+  program_notification: true
 
 sinks:
   - type: stdout

@@ -20,16 +20,8 @@ defmodule Estuary.Config do
       map: %{
         "id" => [required: true, type: :string],
         "idl" => [nullable: true, type: :string],
-        "subscribed_account_types" => [
-          nullable: true,
-          type: :list,
-          list: [required: true, type: :string]
-        ],
-        "subscribed_events" => [
-          nullable: true,
-          type: :list,
-          list: [required: true, type: :string]
-        ]
+        "log_notification" => [nullable: true, type: :boolean],
+        "program_notification" => [nullable: true, type: :boolean]
       }
     ],
     "sinks" => [
@@ -45,11 +37,19 @@ defmodule Estuary.Config do
     ]
   }
 
+  @type log_notification_config :: %{
+          event_types: [String.t()] | nil
+        }
+
+  @type program_notification_config :: %{
+          account_types: [String.t()] | nil
+        }
+
   @type program_config :: %{
           id: String.t(),
           idl: Idl.t() | nil,
-          subscribed_account_types: [String.t()] | nil,
-          subscribed_events: [String.t()] | nil
+          log_notification: log_notification_config() | nil,
+          program_notification: program_notification_config() | nil
         }
 
   @type sink_config :: %{
@@ -126,12 +126,27 @@ defmodule Estuary.Config do
     %{
       id: id,
       idl: Map.get(program, "idl") |> Idl.load!(),
-      subscribed_account_types: Map.get(program, "subscribed_account_types", []),
-      subscribed_events: Map.get(program, "subscribed_events", [])
+      log_notification: Map.get(program, "log_notification") |> load_log_notification_config!(),
+      program_notification:
+        Map.get(program, "program_notification") |> load_program_notification_config!()
     }
   end
 
   defp load_program_config!(_data), do: raise(ArgumentError, "missing program config")
+
+  defp load_log_notification_config!(%{"event_types" => event_types})
+       when is_list(event_types) and event_types != [] do
+    %{event_types: event_types}
+  end
+
+  defp load_log_notification_config!(_config), do: nil
+
+  defp load_program_notification_config!(%{"account_types" => account_types})
+       when is_list(account_types) and account_types != [] do
+    %{account_types: account_types}
+  end
+
+  defp load_program_notification_config!(_config), do: nil
 
   defp load_sink_configs(%{"sinks" => sinks}) when is_list(sinks) and sinks != [] do
     Enum.map(sinks, &normalize_sink/1)

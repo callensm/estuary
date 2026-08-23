@@ -54,9 +54,13 @@ defmodule Estuary.WebSocket do
   end
 
   @impl true
-  def handle_connect(_conn, %State{program: %{subscribed_account_types: [_]}} = state) do
+  def handle_connect(
+        _conn,
+        %State{program: %{program_notification: %{account_types: accounts}}} = state
+      )
+      when is_list(accounts) and accounts != [] do
     Logger.info(
-      "Connected to #{state.url}, subscribing to program account notifications: #{state.program.id} - #{inspect(state.program.subscribed_account_types)}"
+      "Connected to #{state.url}, subscribing to program account notifications: #{state.program.id} - #{inspect(accounts)}"
     )
 
     WebSockex.cast(

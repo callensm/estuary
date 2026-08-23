@@ -19,7 +19,8 @@ estuary:
   program:
     id: <string>
     idl: <string> # Optional IDL JSON file path for parsing
-    subscribed_events: [<string>] # List of IDL/Borsh parsable event names to dispatch
+    log_notification: <boolean>
+    program_notification: <boolean>
   sinks: # Must configure at least one sink type
     - type: stdout
       format: json | pretty

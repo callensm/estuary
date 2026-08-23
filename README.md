@@ -19,8 +19,8 @@ estuary:
   program:
     id: <string>
     idl: <string> # Optional IDL JSON file path for parsing
-    log_notification: <boolean>
-    program_notification: <boolean>
+    log_notifications: <boolean>
+    program_notifications: <boolean>
   sinks: # Must configure at least one sink type
     - type: stdout
       format: json | pretty

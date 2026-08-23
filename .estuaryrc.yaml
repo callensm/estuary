@@ -4,8 +4,8 @@ commitment: confirmed
 program:
   id: "11111111111111111111111111111111"
   idl: ./samples/idl.json
-  log_notification: true
-  program_notification: true
+  log_notifications: true
+  program_notifications: false
 
 sinks:
   - type: stdout

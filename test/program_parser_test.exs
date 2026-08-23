@@ -41,7 +41,10 @@ defmodule Estuary.ProgramParserTest do
 
   test "parses tracked account type data", %{idl: idl, notification: notif} do
     prog =
-      Program.from_json(get_in(notif, ["params", "result", "value"]))
+      Program.from_json(
+        get_in(notif, ["params", "result", "context"]),
+        get_in(notif, ["params", "result", "value"])
+      )
       |> Account.enrich_notification(idl)
 
     assert prog.anchor_state != nil

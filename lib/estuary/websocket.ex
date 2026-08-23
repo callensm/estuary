@@ -17,25 +17,25 @@ defmodule Estuary.WebSocket do
   alias Estuary.Notification.Program
   alias Estuary.WebSocket.State
 
-  @subscription_request_id 1
+  @log_subscription_request_id 1
+  @program_subscription_request_id 2
 
   @type websocket_opts :: [
           {:commitment, String.t()},
           {:program, String.t()},
-          {:subscription_id, non_neg_integer() | nil},
           {:url, String.t()}
         ]
 
   defmodule State do
-    @moduledoc false
     @type t :: %__MODULE__{
             commitment: String.t(),
             program: Config.program_config(),
-            subscription_id: non_neg_integer | nil,
+            log_subscription_id: non_neg_integer() | nil,
+            program_subscription_id: non_neg_integer() | nil,
             url: String.t()
           }
 
-    @enforce_keys [:commitment, :program, :subscription_id, :url]
+    @enforce_keys [:commitment, :program, :log_subscription_id, :program_subscription_id, :url]
     defstruct @enforce_keys
   end
 
@@ -46,7 +46,8 @@ defmodule Estuary.WebSocket do
     state = %State{
       commitment: Keyword.fetch!(opts, :commitment),
       program: Keyword.fetch!(opts, :program),
-      subscription_id: nil,
+      log_subscription_id: nil,
+      program_subscription_id: nil,
       url: url
     }
 
@@ -54,33 +55,28 @@ defmodule Estuary.WebSocket do
   end
 
   @impl true
-  def handle_connect(
-        _conn,
-        %State{program: %{program_notification: %{account_types: accounts}}} = state
-      )
-      when is_list(accounts) and accounts != [] do
-    Logger.info(
-      "Connected to #{state.url}, subscribing to program account notifications: #{state.program.id} - #{inspect(accounts)}"
-    )
-
-    WebSockex.cast(
-      self(),
-      {:send_message, program_subscribe_frame(state.program.id, state.commitment)}
-    )
-
-    {:ok, state}
-  end
-
-  @impl true
   def handle_connect(_conn, state) do
-    Logger.info(
-      "Connected to #{state.url}, subscribing to log notifications: #{state.program.id}"
-    )
+    Logger.info("Connected to #{state.url}, subscribing to notifications: #{state.program.id}")
 
-    WebSockex.cast(
-      self(),
-      {:send_message, log_subscribe_frame(state.program.id, state.commitment)}
-    )
+    if not state.program.log_notifications and not state.program.program_notifications do
+      Logger.warning(
+        "All notification subscription types are currently disabled, no incoming events will be received"
+      )
+    end
+
+    if state.program.log_notifications do
+      WebSockex.cast(
+        self(),
+        {:send_message, log_subscribe_frame(state.program.id, state.commitment)}
+      )
+    end
+
+    if state.program.program_notifications do
+      WebSockex.cast(
+        self(),
+        {:send_message, program_subscribe_frame(state.program.id, state.commitment)}
+      )
+    end
 
     {:ok, state}
   end
@@ -105,9 +101,13 @@ defmodule Estuary.WebSocket do
       {:ok, %{"method" => "programNotification"} = decoded} ->
         handle_program_notification(decoded, state)
 
-      {:ok, %{"id" => @subscription_request_id, "result" => subscription_id}} ->
-        Logger.info("Subscribed with ID: #{subscription_id}")
-        {:ok, %{state | subscription_id: subscription_id}}
+      {:ok, %{"id" => @log_subscription_request_id, "result" => subscription_id}} ->
+        Logger.info("Subscribed to log notifications with ID: #{subscription_id}")
+        {:ok, %{state | log_subscription_id: subscription_id}}
+
+      {:ok, %{"id" => @program_subscription_request_id, "result" => subscription_id}} ->
+        Logger.info("Subscribed to program notifications with ID: #{subscription_id}")
+        {:ok, %{state | program_subscription_id: subscription_id}}
 
       {:ok, %{"error" => error}} ->
         Logger.error("RPC error: #{inspect(error)}")
@@ -152,36 +152,37 @@ defmodule Estuary.WebSocket do
   end
 
   defp handle_program_notification(
-         %{"params" => %{"result" => %{"value" => value}}},
+         %{"params" => %{"result" => %{"context" => context, "value" => value}}},
          state
        ) do
-    notification = Program.from_json(value) |> Account.enrich_notification(state.program.idl)
+    notification =
+      Program.from_json(context, value) |> Account.enrich_notification(state.program.idl)
 
     Estuary.Dispatcher.broadcast(notification)
 
     {:ok, state}
   end
 
-  defp program_subscribe_frame(program_id, commitment) do
-    Jason.encode!(%{
-      id: @subscription_request_id,
-      jsonrpc: "2.0",
-      method: "programSubscribe",
-      params: [
-        program_id,
-        %{commitment: commitment, encoding: "base64"}
-      ]
-    })
-  end
-
   defp log_subscribe_frame(program_id, commitment) do
     Jason.encode!(%{
-      id: @subscription_request_id,
+      id: @log_subscription_request_id,
       jsonrpc: "2.0",
       method: "logsSubscribe",
       params: [
         %{mentions: [program_id]},
         %{commitment: commitment}
+      ]
+    })
+  end
+
+  defp program_subscribe_frame(program_id, commitment) do
+    Jason.encode!(%{
+      id: @program_subscription_request_id,
+      jsonrpc: "2.0",
+      method: "programSubscribe",
+      params: [
+        program_id,
+        %{commitment: commitment, encoding: "base64"}
       ]
     })
   end

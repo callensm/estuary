@@ -3,8 +3,9 @@ defmodule Estuary.Anchor.Account do
   alias Estuary.Anchor.Idl
   alias Estuary.Notification.Program
 
-  @spec enrich_notification(Program.t(), Idl.t()) :: Program.t()
-  def enrich_notification(%Program{data: {data, encoding}} = program, idl) when is_binary(data) do
+  @spec enrich_notification(Program.t(), Idl.t() | nil) :: Program.t()
+  def enrich_notification(%Program{data: {data, encoding}} = program, idl)
+      when is_binary(data) and not is_nil(idl) do
     case encoding do
       "base64" ->
         case decode_b64(safe_decode64(data), idl) do

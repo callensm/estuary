@@ -11,10 +11,10 @@ defmodule Estuary.WebSocket do
 
   require Logger
 
+  alias Estuary.Anchor.Event
   alias Estuary.Anchor.Account
   alias Estuary.Config
-  alias Estuary.Logs.Parser
-  alias Estuary.Notification.Program
+  alias Estuary.Notification
   alias Estuary.WebSocket.State
 
   @log_subscription_request_id 1
@@ -136,15 +136,8 @@ defmodule Estuary.WebSocket do
          state
        ) do
     notification =
-      Parser.parse(
-        %{
-          error: Map.get(value, "err"),
-          logs: Map.get(value, "logs", []),
-          signature: Map.get(value, "signature"),
-          slot: Map.get(context, "slot")
-        },
-        state.program.idl
-      )
+      Notification.Logs.from_json(context, value)
+      |> Event.enrich_notification(state.program.idl)
 
     Estuary.Dispatcher.broadcast(notification)
 
@@ -156,7 +149,8 @@ defmodule Estuary.WebSocket do
          state
        ) do
     notification =
-      Program.from_json(context, value) |> Account.enrich_notification(state.program.idl)
+      Notification.Program.from_json(context, value)
+      |> Account.enrich_notification(state.program.idl)
 
     Estuary.Dispatcher.broadcast(notification)
 

@@ -26,12 +26,11 @@ defmodule Estuary.Notification.Program do
   @spec from_json(map(), map()) :: t()
   def from_json(context, value) do
     %__MODULE__{
-      pubkey: Map.get(value, "pubkey"),
-      owner: get_in(value, ["account", "owner"]),
-      slot: Map.get(context, "slot"),
-      space: get_in(value, ["account", "space"]),
       data: get_in(value, ["account", "data"]) |> List.to_tuple(),
-      anchor_state: nil
+      owner: get_in(value, ["account", "owner"]),
+      pubkey: Map.get(value, "pubkey"),
+      slot: Map.get(context, "slot"),
+      space: get_in(value, ["account", "space"])
     }
   end
 end

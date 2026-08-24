@@ -8,16 +8,16 @@ defmodule Estuary.Logs.Invocation do
   @type status :: :success | :failed | :unknown
 
   @type t :: %__MODULE__{
-          program_id: String.t(),
-          depth: non_neg_integer(),
-          status: status(),
-          error: String.t() | nil,
+          anchor_events: [map()] | nil,
+          children: [t()],
           compute_units_consumed: non_neg_integer() | nil,
           compute_units_limit: non_neg_integer() | nil,
-          logs: [String.t()],
           data: [binary()],
-          anchor_events: [map()] | nil,
-          children: [t()]
+          depth: non_neg_integer(),
+          error: String.t() | nil,
+          logs: [String.t()],
+          program_id: String.t(),
+          status: status()
         }
 
   @derive Jason.Encoder
@@ -26,12 +26,12 @@ defmodule Estuary.Logs.Invocation do
     :program_id,
     :depth,
     status: :unknown,
+    anchor_events: nil,
+    data: [],
     error: nil,
+    children: [],
     compute_units_consumed: nil,
     compute_units_limit: nil,
-    logs: [],
-    data: [],
-    anchor_events: nil,
-    children: []
+    logs: []
   ]
 end

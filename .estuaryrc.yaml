@@ -4,6 +4,7 @@ commitment: confirmed
 program:
   id: "11111111111111111111111111111111"
   idl: ./samples/idl.json
+  account_notifications: "11111111111111111111111111111111"
   log_notifications: true
   program_notifications: false
 

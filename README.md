@@ -8,6 +8,14 @@
   </p>
 </div>
 
+## Features
+
+- Program log streaming
+- Program account state change streaming
+- Anchor program event streaming
+- Event and account state decoding (w/ configured IDL)
+- Dispatching to multiple [configured sink types](#configuration)
+
 ## Configuration
 
 ```yaml

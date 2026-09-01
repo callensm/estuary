@@ -3,7 +3,6 @@ defmodule Estuary.LogsParserTest do
 
   alias Estuary.Anchor.Event
   alias Estuary.Config
-  alias Estuary.Logs.Parser
   alias Estuary.Notification.Logs
 
   setup do
